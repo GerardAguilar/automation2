@@ -15,19 +15,28 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelUtils {
 
-	private static XSSFSheet ExcelWSheet;
+	public XSSFSheet excelWSheet;
 	
-	private static XSSFWorkbook ExcelWBook;
+	public XSSFWorkbook excelWBook;
 	
-	private static XSSFCell Cell;
+	public XSSFCell cell;
 	
-	private static XSSFRow Row;
+	public XSSFRow row;
+	
+	public ExcelUtils(String workbookPath) {
+		try {
+			this.setExcelFile(workbookPath);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	//This method is to set the File path and to open the Excel file, Pass Excel Path and Sheetname as Arguments to this method
 	//don't need the sheetname just yet
 //	public static void setExcelFile(String Path,String SheetName) throws Exception {
-	public static void setExcelFile(String Path) throws Exception {
-
+	public void setExcelFile(String Path) throws Exception {
+		System.out.println("setExcelFile");
 		try {
 
 			// Open the Excel file
@@ -36,8 +45,9 @@ public class ExcelUtils {
 
 		// Access the required test data sheet
 
-		ExcelWBook = new XSSFWorkbook(ExcelFile);
+		excelWBook = new XSSFWorkbook(ExcelFile);
 
+		System.out.println("excelWBook: " + excelWBook.toString() );
 //		ExcelWSheet = ExcelWBook.getSheet(SheetName);
 
 		} catch (Exception e){
@@ -50,13 +60,13 @@ public class ExcelUtils {
 
 	//This method is to read the test data from the Excel cell, in this we are passing parameters as Row num and Col num
 
-	public static String getCellData(int RowNum, int ColNum) throws Exception{
+	public String getCellData(int RowNum, int ColNum) throws Exception{
 	
 			try{
 	
-				Cell = ExcelWSheet.getRow(RowNum).getCell(ColNum);
+				cell = excelWSheet.getRow(RowNum).getCell(ColNum);
 	
-				String CellData = Cell.getStringCellValue();
+				String CellData = cell.getStringCellValue();
 	
 				return CellData;
 	
@@ -73,18 +83,22 @@ public class ExcelUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static int getRowCount(String sheet ) throws Exception{
+	public int getRowCount(String sheet ) throws Exception{
+		System.out.println("[getRowCount] excelWBook: " + excelWBook.toString());
+		excelWSheet = excelWBook.getSheet(sheet);
+		System.out.println("opening sheet: " + sheet + " in "+excelWSheet.toString());		
 		int count=0;
 		try {
-			ExcelWSheet = ExcelWBook.getSheet(sheet);
-			while(true) {
-				String cellData = ExcelUtils.getCellData(count,0);
-				if(cellData.equals("")) {
-					break;
-				}else {
+			String cellData;
+			do {
+				cellData = this.getCellData(count,0);
+				System.out.println("getting cell data: " + cellData + " ["+cellData.length()+"]");
+//				if(cellData.equals("")) {
+//					break;
+//				}else {
 					count++;
-				}
-			}
+//				}
+			}while(cellData.length()>0);
 		}catch(Exception e) {
 			System.out.println("getRowCount failed");
 		}
@@ -92,23 +106,23 @@ public class ExcelUtils {
 		return count;
 	}
 	
-	public static String getColumnTop(int colNum, String sheetName) throws Exception{
+	public String getColumnTop(int colNum, String sheetName) throws Exception{
 		String tempStr = "";		
 		try {
-			ExcelWSheet = ExcelWBook.getSheet(sheetName);
-			tempStr = ExcelUtils.getCellData(0, colNum);
+			excelWSheet = excelWBook.getSheet(sheetName);
+			tempStr = this.getCellData(0, colNum);
 		}catch(Exception e) {
 			System.out.println("getColumnTop failed");
 		}
 		return tempStr;
 	}
 	
-	public static int getColumnCount(String sheet) throws Exception{
+	public int getColumnCount(String sheet) throws Exception{
 		int count=0;
 		try {
-			ExcelWSheet = ExcelWBook.getSheet(sheet);
+			excelWSheet = excelWBook.getSheet(sheet);
 			while(true) {
-				String cellData = ExcelUtils.getCellData(0,count);
+				String cellData = this.getCellData(0,count);
 				if(cellData.equals("")) {
 					break;
 				}else {
@@ -122,12 +136,13 @@ public class ExcelUtils {
 		return count;
 	}
 	
-	public static String[] getColumnData(int colNum, int count, String sheetName) throws Exception{
+	public String[] getColumnData(int colNum, int count, String sheetName) throws Exception{
+		System.out.println("getColumnData");
 		String[] columnData = new String[count];
-		ExcelWSheet = ExcelWBook.getSheet(sheetName);
+		excelWSheet = excelWBook.getSheet(sheetName);
 		try {
 			for(int i=0; i<count; i++) {
-				columnData[i] = ExcelUtils.getCellData(i, colNum);
+				columnData[i] = this.getCellData(i, colNum);
 			}
 			
 		}catch(Exception e) {
@@ -139,23 +154,23 @@ public class ExcelUtils {
 	
 	//This method is to write in the Excel cell, Row num and Col num are the parameters
 	
-	public static void setCellData(String Result,  int RowNum, int ColNum) throws Exception	{
+	public void setCellData(String Result,  int RowNum, int ColNum) throws Exception	{
 	
 			try{
 	
-				Row  = ExcelWSheet.getRow(RowNum);
+				row  = excelWSheet.getRow(RowNum);
 	
-				Cell = Row.getCell(ColNum, Row.RETURN_BLANK_AS_NULL);
+				cell = row.getCell(ColNum, row.RETURN_BLANK_AS_NULL);
 	
-				if (Cell == null) {
+				if (cell == null) {
 		
-					Cell = Row.createCell(ColNum);
+					cell = row.createCell(ColNum);
 		
-					Cell.setCellValue(Result);
+					cell.setCellValue(Result);
 		
 				} else {
 	
-					Cell.setCellValue(Result);
+					cell.setCellValue(Result);
 
 				}
 	
@@ -163,7 +178,7 @@ public class ExcelUtils {
 	
 				FileOutputStream fileOut = new FileOutputStream(Constant.Path_TestData + Constant.File_TestData);
 
-				ExcelWBook.write(fileOut);
+				excelWBook.write(fileOut);
 
 				fileOut.flush();
 
