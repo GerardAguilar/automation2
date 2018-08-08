@@ -80,7 +80,7 @@ class AutomationToolset {
 			xpath = "";
 			willWaitForExpectedConditionType = "";
 			waitFor();
-			willSimulateNavigation = "http://alpine:8080/test.html";
+//			willSimulateNavigation = "http://alpine:8080/test.html";
 			willSimulateClick = false;
 			willSimulateDropdownSelect = "";
 			simulate();
@@ -441,19 +441,37 @@ class AutomationToolset {
 	public void clickElement() {
 		if(willSimulateClick) {
 			if(customAttributeIdPair.length()>0) {
-				WebElement element = driver.findElement(By.cssSelector("*["+customAttributeIdPair+"]"));			
-				addActionToNavigationPath("-click " + elementId);
-				element.click();
+				try {
+					WebElement element = driver.findElement(By.cssSelector("*["+customAttributeIdPair+"]"));			
+					addActionToNavigationPath("-click " + elementId);
+					element.click();
+				}catch(org.openqa.selenium.StaleElementReferenceException ex) {
+					WebElement element = driver.findElement(By.cssSelector("*["+customAttributeIdPair+"]"));			
+					addActionToNavigationPath("-click " + elementId);
+					element.click();
+				}
 			}
 			else if(elementId.length()>0) {
-				WebElement element = driver.findElement(By.id(elementId));			
-				addActionToNavigationPath("-click " + elementId);
-				element.click();
+				try {
+					WebElement element = driver.findElement(By.id(elementId));			
+					addActionToNavigationPath("-click " + elementId);
+					element.click();
+				}catch(org.openqa.selenium.StaleElementReferenceException ex) {
+					WebElement element = driver.findElement(By.id(elementId));			
+					addActionToNavigationPath("-click " + elementId);
+					element.click();
+				}
 			}
 			else if(xpath.length()>0) {
-				WebElement element = driver.findElement(By.xpath(xpath));			
-				addActionToNavigationPath("-click " + xpath);
-				element.click();
+				try {
+					WebElement element = driver.findElement(By.xpath(xpath));			
+					addActionToNavigationPath("-click " + xpath);
+					element.click();
+				}catch(org.openqa.selenium.StaleElementReferenceException ex) {
+					WebElement element = driver.findElement(By.xpath(xpath));			
+					addActionToNavigationPath("-click " + xpath);
+					element.click();
+				}
 			}
 		}
 
@@ -464,35 +482,44 @@ class AutomationToolset {
 		//maybe some kind of newline/tab delimiters?
 		//Excel would be best
 		if(willSimulateDropdownSelect.length()>0) {
-			if(customAttributeIdPair.length()>0) {			
-				WebElement mySelectElement = driver.findElement(By.cssSelector("*["+customAttributeIdPair+"]"));
-				Select dropdown = new Select(mySelectElement);
-//				List<WebElement> els = dropdown.getOptions();
-//				for(int i=0; i<els.size(); i++) {
-//					System.out.print(els.get(i).toString());	
-//					System.out.println(els.get(i).getAttribute("innerHTML"));
-//				}
-				dropdown.selectByVisibleText(willSimulateDropdownSelect);
+			if(customAttributeIdPair.length()>0) {		
+				try {
+					WebElement mySelectElement = driver.findElement(By.cssSelector("*["+customAttributeIdPair+"]"));
+					Select dropdown = new Select(mySelectElement);
+					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
+					dropdown.selectByVisibleText(willSimulateDropdownSelect);
+				}catch(org.openqa.selenium.StaleElementReferenceException ex) {
+					WebElement mySelectElement = driver.findElement(By.cssSelector("*["+customAttributeIdPair+"]"));
+					Select dropdown = new Select(mySelectElement);
+					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
+					dropdown.selectByVisibleText(willSimulateDropdownSelect);
+				}
 			}
-			else if(elementId.length()>0) {			
-				WebElement mySelectElement = driver.findElement(By.id(elementId));
-				Select dropdown = new Select(mySelectElement);
-//				List<WebElement> els = dropdown.getOptions();
-//				for(int i=0; i<els.size(); i++) {
-//					System.out.print(els.get(i).toString());	
-//					System.out.println(els.get(i).getAttribute("innerHTML"));
-//				}
-				dropdown.selectByVisibleText(willSimulateDropdownSelect);
+			else if(elementId.length()>0) {	
+				try {
+					WebElement mySelectElement = driver.findElement(By.id(elementId));
+					Select dropdown = new Select(mySelectElement);
+					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
+					dropdown.selectByVisibleText(willSimulateDropdownSelect);
+				}catch(org.openqa.selenium.StaleElementReferenceException ex) {
+					WebElement mySelectElement = driver.findElement(By.id(elementId));
+					Select dropdown = new Select(mySelectElement);
+					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
+					dropdown.selectByVisibleText(willSimulateDropdownSelect);
+				}
 			}
 			else if(xpath.length()>0) {
-				WebElement mySelectElement = driver.findElement(By.xpath(xpath));
-				Select dropdown = new Select(mySelectElement);
-//				List<WebElement> els = dropdown.getOptions();
-//				for(int i=0; i<els.size(); i++) {
-//					System.out.print(els.get(i).toString());	
-//					System.out.println(els.get(i).getAttribute("innerHTML"));
-//				}
-				dropdown.selectByVisibleText(willSimulateDropdownSelect);
+				try {
+					WebElement mySelectElement = driver.findElement(By.xpath(xpath));
+					Select dropdown = new Select(mySelectElement);
+					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
+					dropdown.selectByVisibleText(willSimulateDropdownSelect);
+				}catch(org.openqa.selenium.StaleElementReferenceException ex) {
+					WebElement mySelectElement = driver.findElement(By.xpath(xpath));
+					Select dropdown = new Select(mySelectElement);
+					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
+					dropdown.selectByVisibleText(willSimulateDropdownSelect);
+				}
 			}
 		} 
 
@@ -605,7 +632,6 @@ class AutomationToolset {
 		}    	
 	}
 	
-	//TODO postSimulation()
 	public String postSimulation() {		
 		takeScreenshot();
 		if(willEndScreening) {
@@ -620,7 +646,7 @@ class AutomationToolset {
 		File screenshotFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 		Long timestamp = (new Timestamp(System.currentTimeMillis())).getTime();
 		String navId = getNavigationPathEventId()+"";
-		String fitnesseRootFileDirectory = "C:\\eclipse-workspace\\automation\\FitNesseRoot\\files\\";
+		String fitnesseRootFileDirectory = "C:\\eclipse-workspace\\automation2\\FitNesseRoot\\files\\";
 		String currentFilename = fitnesseRootFileDirectory+""+navId+".png";
 		
 		try {

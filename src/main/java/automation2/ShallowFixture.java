@@ -47,7 +47,7 @@ public class ShallowFixture {
 		
 	}
 	
-	public void simulate() {
+	public String simulate() {
 		System.out.println("simulate()");
 		String imageString="empty";
 		String attributeCell="";
@@ -69,7 +69,7 @@ public class ShallowFixture {
 			for(int i=0; i<attributesTemplate.attributeCount; i++) {
 							
 				attributeCell = attributesTemplate.getAttribute(i);
-				if(attributeCell.equals("customAttributeIdPair")) {
+				if(!attributeCell.contains(":")) {
 					//do nothing
 				}else {
 					action = attributeCell.split(":")[0];
@@ -86,14 +86,24 @@ public class ShallowFixture {
 						automationToolset.setWillSimulateDropdownSelect(productCell);
 						automationToolset.waitFor();
 						automationToolset.selectFromDropdown();
+					}else if(action.equals("click")&&(productCell.length()>0)) {
+						automationToolset.setCustomAttributeIdPair(attributeIdPair);
+						automationToolset.setWillSimulateClick(true);
+						automationToolset.waitFor();
+						automationToolset.clickElement();
 					} 
 				}
 
 			}
 		}
 //		return imageString;
-		return;
+//		return;
+		return automationToolset.postSimulation();
 	}
+	
+//	public String postSimulation() {
+//		return automationToolset.postSimulation();
+//	}
 	
 	public static void main(String[] args) {
 		ShallowFixture fixture = new ShallowFixture();
