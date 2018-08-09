@@ -28,6 +28,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -58,6 +59,9 @@ class AutomationToolset {
 	public PrintWriter out;
 //	public boolean baselineSet = false;
 	public String loc;		
+	public int xoffset;
+	public int yoffset;
+	
 	
 	public boolean willSimulateClick;
 	public String willSimulateNavigation;	
@@ -67,6 +71,7 @@ class AutomationToolset {
 	public String willWaitForExpectedConditionType;
 	public String willWaitForJavascriptExecutorString;
 //	public String willWaitForSelectDropdownOptions;
+	public String willMoveMouseByOffset;
 	
 	public AutomationToolset() {
 		try {
@@ -115,6 +120,13 @@ class AutomationToolset {
 
 	    wait = new WebDriverWait(driver, 20);
 	    System.out.println("end initialize()");
+	}
+	
+	public void setWillMoveMouseByOffset(String temp) {
+		willMoveMouseByOffset = temp;
+	}
+	public String getWillMoveMouseByOffset() {
+		return willMoveMouseByOffset;
 	}
 	
 	public void setWillSimulateNavigation(String temp) {
@@ -209,6 +221,7 @@ class AutomationToolset {
 		navigateByGlobalAddress();
 		clickElement();
 		selectFromDropdown();
+		dragMouse();
 	}
 		
 	//Waits for source code to stabilize and be identical, needs testing and may need other waits (CSS, JQuery, ExpectedConditions)
@@ -753,6 +766,17 @@ class AutomationToolset {
 		String tempArray[] = temp.split("\n");
 		int tempSize = tempArray.length;
 		return temp;
+	}
+	
+	public void dragMouse() {
+		if(willMoveMouseByOffset.length()>0) {
+			xoffset = Integer.parseInt(willMoveMouseByOffset.split(",")[0]);
+			yoffset = Integer.parseInt(willMoveMouseByOffset.split(",")[1]);
+			WebElement target = driver.findElement(By.xpath("/html[1]/body[1]/div[1]/canvas[1]"));
+			Actions builder = (new Actions(driver)).dragAndDropBy(target, xoffset, yoffset);
+			builder.perform();
+		}
+
 	}
 	
 	public void endScreening() {

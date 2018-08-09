@@ -92,8 +92,8 @@ Test
 
 !|ShallowFixture|
 |ConfigSheetName|ConfigName|simulate?|
-|Awning|Awning1||
-|Awning|Casement Single 1||
-|Awning|Casement Stationary Single||
-|Awning|Casement Double||
-|Awning|Casement Triple 1:1:1||
+|Windows|Awning1||
+|Windows|Casement Single 1||
+|Windows|Casement Stationary Single||
+|Windows|Casement Double||
+|Windows|Casement Triple 1:1:1||

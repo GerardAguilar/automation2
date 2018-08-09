@@ -91,7 +91,10 @@ public class ShallowFixture {
 						automationToolset.setWillSimulateClick(true);
 						automationToolset.waitFor();
 						automationToolset.clickElement();
-					} 
+					}else if(action.equals("mouse")&&(productCell.length()>0)) {
+						automationToolset.setWillMoveMouseByOffset(productCell);
+						automationToolset.dragMouse();
+					}
 				}
 
 			}
