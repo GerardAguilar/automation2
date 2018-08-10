@@ -61,6 +61,8 @@ class AutomationToolset {
 	public String loc;		
 	public int xoffset;
 	public int yoffset;
+	public String appendedImageString;
+	public String fitnesseRootFileDirectory;
 	
 	
 	public boolean willSimulateClick;
@@ -79,6 +81,7 @@ class AutomationToolset {
 			//for automation2, which is not going to be Fitnesse exposed (that would be a different Fixture class), we need to initialize.
 			setupCommand = "initialize baseline";
 			chromeBinaryLocation = "C:\\GoogleChromePortable\\GoogleChromePortable.exe";
+			fitnesseRootFileDirectory = "C:\\eclipse-workspace\\automation2\\FitNesseRoot\\files\\";
 			executeCommand();
 			elementId = "";
 			customAttributeIdPair = "";
@@ -88,8 +91,9 @@ class AutomationToolset {
 //			willSimulateNavigation = "http://alpine:8080/test.html";
 			willSimulateClick = false;
 			willSimulateDropdownSelect = "";
-			simulate();
-			postSimulation();
+//			simulate();
+//			postSimulation();
+			appendedImageString = "";
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	
@@ -102,6 +106,7 @@ class AutomationToolset {
 	    instanceStartTime = (new Timestamp(System.currentTimeMillis())).getTime()+"";		
 	    cwd  = new File("").getAbsolutePath();
 	    
+	    //have to change these
         File baselineDirectory = new File(cwd+"\\baseline");
         if (!baselineDirectory.exists()) {
         	baselineDirectory.mkdirs();
@@ -462,6 +467,10 @@ class AutomationToolset {
 					WebElement element = driver.findElement(By.cssSelector("*["+customAttributeIdPair+"]"));			
 					addActionToNavigationPath("-click " + elementId);
 					element.click();
+				}catch(org.openqa.selenium.ElementNotVisibleException ex) {
+					WebElement element = driver.findElement(By.cssSelector("*["+customAttributeIdPair+"]"));			
+					addActionToNavigationPath("-click " + elementId);
+					element.click();
 				}
 			}
 			else if(elementId.length()>0) {
@@ -473,6 +482,10 @@ class AutomationToolset {
 					WebElement element = driver.findElement(By.id(elementId));			
 					addActionToNavigationPath("-click " + elementId);
 					element.click();
+				}catch(org.openqa.selenium.ElementNotVisibleException ex) {
+					WebElement element = driver.findElement(By.id(elementId));			
+					addActionToNavigationPath("-click " + elementId);
+					element.click();
 				}
 			}
 			else if(xpath.length()>0) {
@@ -481,6 +494,10 @@ class AutomationToolset {
 					addActionToNavigationPath("-click " + xpath);
 					element.click();
 				}catch(org.openqa.selenium.StaleElementReferenceException ex) {
+					WebElement element = driver.findElement(By.xpath(xpath));			
+					addActionToNavigationPath("-click " + xpath);
+					element.click();
+				}catch(org.openqa.selenium.ElementNotVisibleException ex) {
 					WebElement element = driver.findElement(By.xpath(xpath));			
 					addActionToNavigationPath("-click " + xpath);
 					element.click();
@@ -506,6 +523,18 @@ class AutomationToolset {
 					Select dropdown = new Select(mySelectElement);
 					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
 					dropdown.selectByVisibleText(willSimulateDropdownSelect);
+				}catch(org.openqa.selenium.ElementNotVisibleException ex) {//need to include waits here
+					//temporary
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					WebElement mySelectElement = driver.findElement(By.cssSelector("*["+customAttributeIdPair+"]"));
+					Select dropdown = new Select(mySelectElement);
+					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
+					dropdown.selectByVisibleText(willSimulateDropdownSelect);
 				}
 			}
 			else if(elementId.length()>0) {	
@@ -519,6 +548,17 @@ class AutomationToolset {
 					Select dropdown = new Select(mySelectElement);
 					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
 					dropdown.selectByVisibleText(willSimulateDropdownSelect);
+				}catch(org.openqa.selenium.ElementNotVisibleException ex) {
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					WebElement mySelectElement = driver.findElement(By.id(elementId));
+					Select dropdown = new Select(mySelectElement);
+					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
+					dropdown.selectByVisibleText(willSimulateDropdownSelect);
 				}
 			}
 			else if(xpath.length()>0) {
@@ -528,6 +568,17 @@ class AutomationToolset {
 					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
 					dropdown.selectByVisibleText(willSimulateDropdownSelect);
 				}catch(org.openqa.selenium.StaleElementReferenceException ex) {
+					WebElement mySelectElement = driver.findElement(By.xpath(xpath));
+					Select dropdown = new Select(mySelectElement);
+					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
+					dropdown.selectByVisibleText(willSimulateDropdownSelect);
+				}catch(org.openqa.selenium.ElementNotVisibleException ex) {
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					WebElement mySelectElement = driver.findElement(By.xpath(xpath));
 					Select dropdown = new Select(mySelectElement);
 					addActionToNavigationPath("-select " + willSimulateDropdownSelect);
@@ -646,21 +697,23 @@ class AutomationToolset {
 	}
 	
 	public String postSimulation() {		
-		takeScreenshot();
+//		takeScreenshot();
 		if(willEndScreening) {
 			return "Finished";
 		}else {
-			return Image();
+			String returnMe = Image();
+			appendedImageString = "";//cleared for the next round
+			return returnMe;
 		}		
 	}
 	
 	@SuppressWarnings("unused")
-	public void takeScreenshot() {
+	public void takeScreenshot(String sheetName, String configName) {
 		File screenshotFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 		Long timestamp = (new Timestamp(System.currentTimeMillis())).getTime();
 		String navId = getNavigationPathEventId()+"";
-		String fitnesseRootFileDirectory = "C:\\eclipse-workspace\\automation2\\FitNesseRoot\\files\\";
-		String currentFilename = fitnesseRootFileDirectory+""+navId+".png";
+//		String currentFilename = fitnesseRootFileDirectory+""+navId+".png";
+		String currentFilename = fitnesseRootFileDirectory+""+sheetName+"_"+configName+"_"+navId+".png";
 		
 		try {
 			FileUtils.copyFile(screenshotFile, new File(currentFilename));					
@@ -752,8 +805,18 @@ class AutomationToolset {
 	public String Image() {
 		String currentImageId = getNavigationPathEventId()+"";
 		String currentImagePath = getLastSetOfActions(navigationPath, 1);
-		return "<div><details><summary>"+currentImageId+"</summary><p>"+currentImagePath+"</p></details></div><div><img src='http://localhost/files/"+currentImageId+".png' height='150'></div>";
+		String returnMe = "<div><details><summary>"+currentImageId+"</summary><p>"+currentImagePath+"</p></details></div>" + appendedImageString;
+//		return "<div><details><summary>"+currentImageId+"</summary><p>"+currentImagePath+"</p></details></div><div><img src='http://localhost/files/"+currentImageId+".png' height='450'></div>";
+		return returnMe;
 	}	
+	
+	public void appendImageString(String sheetName, String configName) {
+		String currentImageId = getNavigationPathEventId()+"";
+		String currentImagePath = getLastSetOfActions(navigationPath, 1);
+//		appendedImageString += "<div><details><summary>"+currentImageId+"</summary><p>"+currentImagePath+"</p></details></div><div><img src='http://localhost/files/"+currentImageId+".png' height='200'></div>";
+		appendedImageString += "<div><details><summary>"+currentImageId+"</summary><p>"+currentImagePath+"</p></details></div><div><img src='http://localhost/files/"+sheetName+"_"+configName+"_"+currentImageId+".png' height='200'></div>";
+
+	}
 	
 	public int getNavigationPathEventId() {
 		int eventId = navigationPath.size()-1;
@@ -770,8 +833,10 @@ class AutomationToolset {
 	
 	public void dragMouse() {
 		if(willMoveMouseByOffset.length()>0) {
+			
 			xoffset = Integer.parseInt(willMoveMouseByOffset.split(",")[0]);
 			yoffset = Integer.parseInt(willMoveMouseByOffset.split(",")[1]);
+			addActionToNavigationPath("-mouse drag [" + xoffset + "," + yoffset +"]\r\n");
 			WebElement target = driver.findElement(By.xpath("/html[1]/body[1]/div[1]/canvas[1]"));
 			Actions builder = (new Actions(driver)).dragAndDropBy(target, xoffset, yoffset);
 			builder.perform();

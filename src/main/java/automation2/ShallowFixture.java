@@ -33,18 +33,14 @@ public class ShallowFixture {
 		try {
 			workbookPath = "C:\\Users\\gaguilar\\Desktop\\AndersenTestcases.xlsx";
 			automationToolset = new AutomationToolset();
-			automationToolset.willSimulateNavigation = "http://alpine:8080/test.html";
+			automationToolset.willSimulateNavigation = "http://inhancemetrics.com:3012/test-new.html";
 			automationToolset.navigateByGlobalAddress();
 			excelUtils = new ExcelUtils(workbookPath);
-//			excelUtils.setExcelFile(workbookPath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("Invalid excel sheet.");
-		}		
-//		productListing = generateProductListing();		
-//		List<Product> generateProductListing(){
-		
+		}				
 	}
 	
 	public String simulate() {
@@ -94,19 +90,14 @@ public class ShallowFixture {
 					}else if(action.equals("mouse")&&(productCell.length()>0)) {
 						automationToolset.setWillMoveMouseByOffset(productCell);
 						automationToolset.dragMouse();
+						automationToolset.takeScreenshot(configSheetName, configName);
+						automationToolset.appendImageString(configSheetName, configName);
 					}
 				}
-
 			}
 		}
-//		return imageString;
-//		return;
 		return automationToolset.postSimulation();
 	}
-	
-//	public String postSimulation() {
-//		return automationToolset.postSimulation();
-//	}
 	
 	public static void main(String[] args) {
 		ShallowFixture fixture = new ShallowFixture();

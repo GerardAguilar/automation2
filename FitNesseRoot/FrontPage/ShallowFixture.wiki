@@ -80,20 +80,18 @@ Test
 *!
 !***> imports
 
-|import|
+|import     |
 |automation2|
 
-|import|
+|import            |
 |fitnesse.slim.test|
 
-|import|
+|import           |
 |fitnesse.fixtures|
 *!
 
-!|ShallowFixture|
-|ConfigSheetName|ConfigName|simulate?|
-|Windows|Awning1||
-|Windows|Casement Single 1||
-|Windows|Casement Stationary Single||
-|Windows|Casement Double||
-|Windows|Casement Triple 1:1:1||
+!|ShallowFixture                                    |
+|ConfigSheetName               |ConfigName|simulate?|
+|Gliding AP Full Screen Default|1         |         |
+|Gliding AP Full Screen Default|2         |         |
+|Gliding AP Full Screen Default|3         |         |

@@ -77,16 +77,18 @@
 *!
 !***> imports
 
-|import|
+|import     |
 |automation2|
 
-|import|
+|import            |
 |fitnesse.slim.test|
 
-|import|
+|import           |
 |fitnesse.fixtures|
 *!
 
-!|ShallowFixture|
-|ConfigSheetName|ConfigName|simulate?|
-|Awning|Awning1||
+!|ShallowFixture                                    |
+|ConfigSheetName               |ConfigName|simulate?|
+|Gliding AP Full Screen Default|1         |         |
+|Gliding AP Full Screen Default|2         |         |
+|Gliding AP Full Screen Default|3         |         |
