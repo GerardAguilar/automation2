@@ -33,7 +33,9 @@ public class ShallowFixture {
 		try {
 			workbookPath = "C:\\Users\\gaguilar\\Desktop\\AndersenTestcases.xlsx";
 			automationToolset = new AutomationToolset();
-			automationToolset.willSimulateNavigation = "http://inhancemetrics.com:3012/test-new.html";
+//			automationToolset.willSimulateNavigation = "http://inhancemetrics.com:3012/test-new.html";
+//			automationToolset.willSimulateNavigation = "http://alpine:8080/test.html";
+			automationToolset.willSimulateNavigation = "https://andersen.inhance.io/app/test.html";
 			automationToolset.navigateByGlobalAddress();
 			excelUtils = new ExcelUtils(workbookPath);
 		} catch (Exception e) {
@@ -99,7 +101,7 @@ public class ShallowFixture {
 		return automationToolset.postSimulation();
 	}
 	
-	public static void main(String[] args) {
-		ShallowFixture fixture = new ShallowFixture();
-	}
+//	public static void main(String[] args) {
+//		ShallowFixture fixture = new ShallowFixture();
+//	}
 }
