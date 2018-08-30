@@ -3,6 +3,8 @@ package automation2;
 public class Product{
 	public int attributeCount;
 	public String[] attributes;
+	public String[][] optionsList;
+//	String[] markers;
 	String type;
 	String sheetName;
 	ExcelUtils excelUtils;
@@ -12,8 +14,7 @@ public class Product{
 		sheetName = sheet;
 		excelUtils = excelUtilsParam;
 		attributeCount = countAttributes();
-		extractAttributesFromColumn(productName);
-		
+		extractAttributesFromColumn(productName);		
 	}
 	
 	public String getAttribute(int i) {
@@ -50,15 +51,23 @@ public class Product{
 		if(column>=0) {
 			try {
 				attributes = excelUtils.getColumnData(column, attributeCount, sheetName);
+//				markers = excelUtils.getColumnData(column, attributeCount, sheetName);
 			} catch (Exception e) {
 				System.out.println("getColumnData failed");
 				e.printStackTrace();
 			}
-		}		
-		
+		}				
 		System.out.println("extractAttributesFromColumn end");
 		return;
 	}
+	
+//	private void assignAttributesFromMarkers() {
+//		
+//	}
+//	
+//	private void generateOptions() {
+//		
+//	}
 
 	private int countAttributes() {
 		int count=0;

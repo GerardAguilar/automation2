@@ -58,6 +58,7 @@ public class ShallowFixture {
 		if(configName.length()>0&&configSheetName.length()>0) {
 			System.out.println("configName: "+ configName+" length is good. configSheetName: " +configSheetName+" length is good.");
 			System.out.println("excelUtils: "+excelUtils.toString());
+			//attributesTemplate is our set of web elements to target, really only needs to be done once per sheet, but for now we'll do it at every simulate() call
 			attributesTemplate = new Product(configSheetName, "customAttributeIdPair", excelUtils);	
 			product = new Product(configSheetName, configName, excelUtils);		
 			
@@ -89,11 +90,29 @@ public class ShallowFixture {
 						automationToolset.setWillSimulateClick(true);
 						automationToolset.waitFor();
 						automationToolset.clickElement();
-					}else if(action.equals("mouse")&&(productCell.length()>0)) {
-						automationToolset.setWillMoveMouseByOffset(productCell);
-						automationToolset.dragMouse();
-						automationToolset.takeScreenshot(configSheetName, configName);
-						automationToolset.appendImageString(configSheetName, configName);
+					}else if(action.equals("mouse")) {
+						if(attributeIdPair.equals("hold")) {
+//							automationToolset.setWillDragMouseByOffset(productCell);
+							automationToolset.mouseHold();
+							automationToolset.takeScreenshot(configSheetName, configName);
+							automationToolset.appendImageString(configSheetName, configName);	
+						}else if(attributeIdPair.equals("teleport")&&(productCell.length()>0)) {
+							automationToolset.setWillMoveMouseByOffset(productCell);
+							automationToolset.mouseMove();
+							automationToolset.takeScreenshot(configSheetName, configName);
+							automationToolset.appendImageString(configSheetName, configName);	
+						}else if(attributeIdPair.equals("release")) {
+//							automationToolset.setWillMoveMouseToXpath(productCell);
+							automationToolset.mouseRelease();
+							automationToolset.takeScreenshot(configSheetName, configName);
+							automationToolset.appendImageString(configSheetName, configName);	
+						}else if(attributeIdPair.equals("drag")) {
+							automationToolset.setWillDragMouseByOffset(productCell);
+							automationToolset.dragMouse();
+							automationToolset.takeScreenshot(configSheetName, configName);
+							automationToolset.appendImageString(configSheetName, configName);	
+						}
+
 					}
 				}
 			}

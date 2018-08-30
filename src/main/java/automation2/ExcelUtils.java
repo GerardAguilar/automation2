@@ -143,12 +143,11 @@ public class ExcelUtils {
 		try {
 			for(int i=0; i<count; i++) {
 				columnData[i] = this.getCellData(i, colNum);
-			}
-			
+			}			
 		}catch(Exception e) {
 			System.out.println("Couldn't getCellData()"); 
 		}
-		return columnData;				
+		return columnData;
 		
 	}
 	

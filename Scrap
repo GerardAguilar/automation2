@@ -1,0 +1,107 @@
+//  public void dragMouse() {
+//      if(willDragMouseByOffset.length()>0) {      
+////            try {
+////                Robot robot = new Robot();
+//              xDragOffset = Integer.parseInt(willDragMouseByOffset.split(",")[0]);
+//              yDragOffset = Integer.parseInt(willDragMouseByOffset.split(",")[1]);
+////                addActionToNavigationPath("-mouse drag [" + xDragOffset + "," + yDragOffset +"]\r\n");
+////                WebElement target = driver.findElement(By.xpath("/html[1]/body[1]/div[1]/canvas[1]"));
+////                Actions builder = (new Actions(driver)).dragAndDropBy(target, xDragOffset, yDragOffset);
+////                builder.perform();
+////                Point p = MouseInfo.getPointerInfo().getLocation();
+////                addActionToNavigationPath("-mouse moved [" + p +"]\r\n");
+////            } catch (AWTException e) {
+////                // TODO Auto-generated catch block
+////                e.printStackTrace();
+////            }
+//          clickMouse();
+//          moveMouseByOffset(xDragOffset, yDragOffset);
+//          releaseMouse();
+//      }
+//  }
+//  
+//  public void moveMouseToXpath() {
+//      if(willMoveMouseToXpath.length()>0) {           
+//          WebElement target = driver.findElement(By.xpath(willMoveMouseToXpath));
+////            Actions builder = (new Actions(driver)).moveToElement(target);          
+////            builder.perform();
+//          Robot robot;
+//          try {
+//              robot = new Robot();
+//              robot.mouseMove(target.getLocation().getX(), target.getLocation().getY());
+//              addActionToNavigationPath("-mouse move to "+target+"\r\n");
+//              Point p = MouseInfo.getPointerInfo().getLocation();
+//              addActionToNavigationPath("-mouse moved [" + p +"]\r\n");
+//          } catch (AWTException e) {
+//              // TODO Auto-generated catch block
+//              e.printStackTrace();
+//          }
+//
+//      }
+//  }
+//  
+//  public void moveMouseByOffset() {
+//      if(willMoveMouseByOffset.length()>0) {
+//          try {
+//              Robot robot = new Robot();
+//              xMoveOffset = Integer.parseInt(willMoveMouseByOffset.split(",")[0]);
+//              yMoveOffset = Integer.parseInt(willMoveMouseByOffset.split(",")[1]);
+//              addActionToNavigationPath("-mouse move [" + xMoveOffset + "," + yMoveOffset +"]\r\n");
+//              WebElement target = driver.findElement(By.xpath("/html[1]/body[1]/div[1]/canvas[1]"));
+////                Actions builder = (new Actions(driver)).moveByOffset(xMoveOffset, yMoveOffset);
+////                Actions builder = (new Actions(driver)).moveToElement(target, xMoveOffset, yMoveOffset);
+////                builder.perform();
+//              robot.mouseMove(xMoveOffset, yMoveOffset);
+//              Point p = MouseInfo.getPointerInfo().getLocation();
+//              addActionToNavigationPath("-mouse moved [" + p +"]\r\n");
+//          } catch (AWTException e) {
+//              // TODO Auto-generated catch block
+//              System.out.println("Robot creation failed");
+//              e.printStackTrace();
+//          }
+//      }
+//  }
+//  public void teleportMouse(int x, int y) {
+//      try {
+//          Robot robot = new Robot();
+//          addActionToNavigationPath("-mouse teleport [" + xMoveOffset + "," + yMoveOffset +"]\r\n");
+////            Actions builder = (new Actions(driver)).moveByOffset(xMoveOffset, yMoveOffset);
+////            Actions builder = (new Actions(driver)).moveToElement(target, xMoveOffset, yMoveOffset);
+////            builder.perform();
+//          robot.mouseMove(x, y);
+//          Point p = MouseInfo.getPointerInfo().getLocation();
+//          addActionToNavigationPath("-mouse teleported [" + p +"]\r\n");
+//      } catch (AWTException e) {
+//          // TODO Auto-generated catch block
+//          System.out.println("Robot creation failed");
+//          e.printStackTrace();
+//      }
+//  }
+//  
+//  public void clickMouse() {
+////        if(willMoveMouseByOffset.length()>0) {
+//          try {
+//              Robot robot = new Robot();
+//              robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+//              Point p = MouseInfo.getPointerInfo().getLocation();
+//              addActionToNavigationPath("-mouse pressed [" + p +"]\r\n");
+//          } catch (AWTException e) {
+//              // TODO Auto-generated catch block
+//              System.out.println("Robot creation failed");
+//              e.printStackTrace();
+//          }
+////        }
+//  }
+//  public void releaseMouse() {
+//      try {
+//          Robot robot = new Robot();
+//          robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+//          Point p = MouseInfo.getPointerInfo().getLocation();
+//          addActionToNavigationPath("-mouse pressed [" + p +"]\r\n");
+//      } catch (AWTException e) {
+//          // TODO Auto-generated catch block
+//          System.out.println("Robot creation failed");
+//          e.printStackTrace();
+//      }
+//  
+//  }

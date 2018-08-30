@@ -1,7 +1,12 @@
 package automation2;
 
 
+import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -59,8 +64,10 @@ class AutomationToolset {
 	public PrintWriter out;
 //	public boolean baselineSet = false;
 	public String loc;		
-	public int xoffset;
-	public int yoffset;
+	public int xDragOffset;
+	public int yDragOffset;
+	public int xMoveOffset;
+	public int yMoveOffset;
 	public String appendedImageString;
 	public String fitnesseRootFileDirectory;
 	
@@ -73,7 +80,9 @@ class AutomationToolset {
 	public String willWaitForExpectedConditionType;
 	public String willWaitForJavascriptExecutorString;
 //	public String willWaitForSelectDropdownOptions;
+	public String willDragMouseByOffset;
 	public String willMoveMouseByOffset;
+	public String willMoveMouseToXpath;
 	
 	public AutomationToolset() {
 		try {
@@ -127,11 +136,24 @@ class AutomationToolset {
 	    System.out.println("end initialize()");
 	}
 	
+	public void setWillDragMouseByOffset(String temp) {
+		willDragMouseByOffset = temp;
+	}
+	public String getWillDragMouseByOffset() {
+		return willDragMouseByOffset;
+	}
+	
 	public void setWillMoveMouseByOffset(String temp) {
 		willMoveMouseByOffset = temp;
 	}
 	public String getWillMoveMouseByOffset() {
 		return willMoveMouseByOffset;
+	}
+	public void setWillMoveMouseToXpath(String temp) {
+		willMoveMouseToXpath = temp;
+	}
+	public String getWillMoveMouseToXpath() {
+		return willMoveMouseToXpath;
 	}
 	
 	public void setWillSimulateNavigation(String temp) {
@@ -226,7 +248,7 @@ class AutomationToolset {
 		navigateByGlobalAddress();
 		clickElement();
 		selectFromDropdown();
-		dragMouse();
+
 	}
 		
 	//Waits for source code to stabilize and be identical, needs testing and may need other waits (CSS, JQuery, ExpectedConditions)
@@ -243,7 +265,7 @@ class AutomationToolset {
 				boolean sameSource = false;
 				try {
 					String pageSourceFirst = driverCopy.getPageSource();
-					Thread.sleep(100);
+					Thread.sleep(50);
 					String pageSourceSecond = driverCopy.getPageSource();
 					if(pageSourceSecond.equals(pageSourceFirst)) {
 						sameSource=true;
@@ -638,7 +660,7 @@ class AutomationToolset {
             	System.out.println("chromedriver.exe already exists");
             }
 			String chromeDriverLocation = chromedriver.getAbsolutePath();
-	        
+	        System.out.println("chromeDriver's absolute path: " + chromeDriverLocation);
 			ChromeOptions options = new ChromeOptions();
 			options.setBinary(chromeBinaryLocation);
 			options.addArguments("disable-infobars");
@@ -814,7 +836,7 @@ class AutomationToolset {
 		String currentImageId = getNavigationPathEventId()+"";
 		String currentImagePath = getLastSetOfActions(navigationPath, 1);
 //		appendedImageString += "<div><details><summary>"+currentImageId+"</summary><p>"+currentImagePath+"</p></details></div><div><img src='http://localhost/files/"+currentImageId+".png' height='200'></div>";
-		appendedImageString += "<div><details><summary>"+currentImageId+"</summary><p>"+currentImagePath+"</p></details></div><div><img src='http://localhost/files/"+sheetName+"_"+configName+"_"+currentImageId+".png' height='200'></div>";
+		appendedImageString += "<div><details><summary>"+currentImageId+"</summary><p>"+currentImagePath+"</p></details></div><div><img src='http://localhost/files/"+sheetName+"_"+configName+"_"+currentImageId+".png' height='400'></div>";
 
 	}
 	
@@ -831,18 +853,63 @@ class AutomationToolset {
 		return temp;
 	}
 	
-	public void dragMouse() {
-		if(willMoveMouseByOffset.length()>0) {
-			
-			xoffset = Integer.parseInt(willMoveMouseByOffset.split(",")[0]);
-			yoffset = Integer.parseInt(willMoveMouseByOffset.split(",")[1]);
-			addActionToNavigationPath("-mouse drag [" + xoffset + "," + yoffset +"]\r\n");
-			WebElement target = driver.findElement(By.xpath("/html[1]/body[1]/div[1]/canvas[1]"));
-			Actions builder = (new Actions(driver)).dragAndDropBy(target, xoffset, yoffset);
-			builder.perform();
-		}
-
+	public void mouseClick(){
+		mouseHold();
+		mouseRelease();
 	}
+	public void mouseHold() {
+		try {
+			Robot robot = new Robot();
+			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+	        Point p = MouseInfo.getPointerInfo().getLocation();
+	        addActionToNavigationPath("-mouse hold [" + p +"]\r\n");
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+	public void mouseRelease() {
+		try {
+			Robot robot = new Robot();
+			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+	        Point p = MouseInfo.getPointerInfo().getLocation();
+	        addActionToNavigationPath("-mouse release [" + p +"]\r\n");
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+	public void mouseMove() {
+		if(willMoveMouseByOffset.length()>0) {
+			try {
+				xMoveOffset = Integer.parseInt(willMoveMouseByOffset.split(",")[0]);
+				yMoveOffset = Integer.parseInt(willMoveMouseByOffset.split(",")[1]);
+				Robot robot = new Robot();
+				Point pOrigin = MouseInfo.getPointerInfo().getLocation();
+				robot.mouseMove(xMoveOffset, yMoveOffset);
+		        Point pResult = MouseInfo.getPointerInfo().getLocation();
+		        addActionToNavigationPath("-mouse coordinates [" + xMoveOffset +", "+yMoveOffset+"]");
+		        addActionToNavigationPath("-mouse teleport [" + pOrigin +"] to ["+pResult+"]\r\n");
+			} catch (AWTException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+	}
+	
+	public void dragMouse() {
+		if(willDragMouseByOffset.length()>0) {      
+			xDragOffset = Integer.parseInt(willDragMouseByOffset.split(",")[0]);
+			yDragOffset = Integer.parseInt(willDragMouseByOffset.split(",")[1]);
+			addActionToNavigationPath("-mouse drag [" + xDragOffset + "," + yDragOffset +"]\r\n");
+			WebElement target = driver.findElement(By.xpath("/html[1]/body[1]/div[1]/canvas[1]"));
+			Actions builder = (new Actions(driver)).dragAndDropBy(target, xDragOffset, yDragOffset);
+			builder.perform();
+			Point p = MouseInfo.getPointerInfo().getLocation();
+			addActionToNavigationPath("-mouse moved [" + p +"]\r\n");
+		}
+	}
+
 	
 	public void endScreening() {
 		out.close();
